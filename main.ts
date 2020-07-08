@@ -1,9 +1,14 @@
 /**
- * Reset alle variabele
+ * - Bereken de actuele speeltijd
  * 
- * Stop de finish muziek
+ * - Laat om de 5 seconden de speeltijd zien op het scherm
+ */
+/**
+ * - Reset alle variabele
  * 
- * Toon de tekst “druk A om te spelen”
+ * - Stop de finish muziek
+ * 
+ * - Toon de tekst “druk A om te spelen”
  */
 function Reset_het_spel () {
     muziek_is_gestart = false
@@ -38,12 +43,16 @@ function Start_aftellen () {
  */
 function Toon_eindtijd () {
     music.stopMelody(MelodyStopOptions.All)
-    basic.showNumber(speeltijd)
+    basic.showString(" Tijd: " + speeltijd)
 }
 input.onPinPressed(TouchPin.P2, function () {
     if (speltoestand == SPEL_IS_GESTART) {
         speltoestand = SPELER_IS_GEFINISHT
     }
+})
+input.onButtonPressed(Button.AB, function () {
+    led.stopAnimation()
+    basic.showString("Eline Kon")
 })
 /**
  * - Start de finish muziek als deze nog niet gestart is
@@ -68,11 +77,6 @@ input.onPinPressed(TouchPin.P1, function () {
         music.playTone(139, music.beat(BeatFraction.Double))
     }
 })
-/**
- * - Bereken de speeltijd
- * 
- * - Laat om de 5 seconden de speeltijd zien op het scherm
- */
 function Toon_speeltijd () {
     speeltijd = Math.trunc((input.runningTime() - starttijd) / 1000)
     if (speeltijd % 5 == 0) {
