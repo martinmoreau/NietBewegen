@@ -1,9 +1,4 @@
 /**
- * - Bereken de actuele speeltijd
- * 
- * - Laat om de 5 seconden de speeltijd zien op het scherm
- */
-/**
  * - Reset alle variabele
  * 
  * - Stop de finish muziek
@@ -20,8 +15,6 @@ input.onButtonPressed(Button.A, function () {
     if (speltoestand == SPEL_IS_GESTOPT) {
         led.stopAnimation()
         speltoestand = AFTELLEN_IS_GESTART
-    } else if (speltoestand == SPEL_IS_GESTART) {
-        speltoestand = SPEL_IS_GESTOPT
     } else if (speltoestand == SPELER_IS_GEFINISHT) {
         speltoestand = EINDTIJD_WORDT_GETOOND
     }
@@ -34,6 +27,7 @@ input.onButtonPressed(Button.A, function () {
 function Start_aftellen () {
     music.playMelody("C - C - C5 - - - ", 120)
     starttijd = input.runningTime()
+    basic.showString("Go!")
     speltoestand = SPEL_IS_GESTART
 }
 /**
@@ -52,7 +46,7 @@ input.onPinPressed(TouchPin.P2, function () {
 })
 input.onButtonPressed(Button.AB, function () {
     led.stopAnimation()
-    basic.showString("Eline Kon")
+    basic.showString("  Eline Kon heeft dit geprogrammeerd.  ")
 })
 /**
  * - Start de finish muziek als deze nog niet gestart is
@@ -72,11 +66,16 @@ input.onButtonPressed(Button.B, function () {
     }
 })
 input.onPinPressed(TouchPin.P1, function () {
-    if (speltoestand == SPEL_IS_GESTART) {
+    if (speltoestand == AFTELLEN_IS_GESTART || speltoestand == SPEL_IS_GESTART) {
         music.playTone(165, music.beat(BeatFraction.Whole))
         music.playTone(139, music.beat(BeatFraction.Double))
     }
 })
+/**
+ * - Bereken de actuele speeltijd
+ * 
+ * - Laat om de 5 seconden de speeltijd zien op het scherm
+ */
 function Toon_speeltijd () {
     speeltijd = Math.trunc((input.runningTime() - starttijd) / 1000)
     if (speeltijd % 5 == 0) {
@@ -113,4 +112,8 @@ basic.forever(function () {
     } else if (speltoestand == SPEL_IS_GESTOPT) {
         Reset_het_spel()
     }
+})
+basic.forever(function () {
+    serial.writeLine("" + (speltoestand))
+    basic.pause(10000)
 })
