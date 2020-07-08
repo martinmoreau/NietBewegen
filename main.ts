@@ -1,3 +1,6 @@
+function Stop_het_spel () {
+	
+}
 input.onButtonPressed(Button.A, function () {
     if (speltoestand == SPEL_IS_GESTOPT) {
         led.stopAnimation()
@@ -8,11 +11,40 @@ input.onButtonPressed(Button.A, function () {
         speltoestand = EINDTIJD_WORDT_GETOOND
     }
 })
+/**
+ * - Speel het aftelgeluid af
+ * 
+ * - Onthoud de startijd om later de speltijd te berekenen
+ */
+function Start_aftellen () {
+    music.playMelody("C - C - C5 - - - ", 120)
+    starttijd = input.runningTime()
+    speltoestand = SPEL_IS_GESTART
+}
+/**
+ * - Stop de finish muziek
+ * 
+ * - Toon de eindtijd op het scherm
+ */
+function Toon_eindtijd () {
+    music.stopMelody(MelodyStopOptions.All)
+    basic.showNumber(speeltijd)
+}
 input.onPinPressed(TouchPin.P2, function () {
     if (speltoestand == SPEL_IS_GESTART) {
         speltoestand = SPELER_IS_GEFINISHT
     }
 })
+/**
+ * - Start de finish muziek
+ */
+function Start_finish_muziek () {
+    if (!(muziek_is_gestart)) {
+        music.startMelody(music.builtInMelody(Melodies.Entertainer), MelodyOptions.Forever)
+        muziek_is_gestart = true
+    }
+    basic.showIcon(IconNames.Happy)
+}
 input.onButtonPressed(Button.B, function () {
     if (speltoestand != SPEL_IS_GESTOPT) {
         speltoestand = SPEL_IS_GESTOPT
@@ -24,6 +56,17 @@ input.onPinPressed(TouchPin.P1, function () {
         music.playTone(139, music.beat(BeatFraction.Double))
     }
 })
+/**
+ * - Bereken de speeltijd
+ * 
+ * - Laat om de 5 seconden de speeltijd zien op het scherm
+ */
+function Toon_speeltijd () {
+    speeltijd = Math.trunc((input.runningTime() - starttijd) / 1000)
+    if (speeltijd % 5 == 0) {
+        basic.showNumber(speeltijd)
+    }
+}
 let muziek_is_gestart = false
 let speeltijd = 0
 let starttijd = 0
@@ -44,23 +87,13 @@ speltoestand = SPEL_IS_GESTOPT
  */
 basic.forever(function () {
     if (speltoestand == AFTELLEN_IS_GESTART) {
-        music.playMelody("C - C - C5 - - - ", 120)
-        starttijd = input.runningTime()
-        speltoestand = SPEL_IS_GESTART
+        Start_aftellen()
     } else if (speltoestand == SPEL_IS_GESTART) {
-        speeltijd = Math.trunc((input.runningTime() - starttijd) / 1000)
-        if (speeltijd % 5 == 0) {
-            basic.showNumber(speeltijd)
-        }
+        Toon_speeltijd()
     } else if (speltoestand == SPELER_IS_GEFINISHT) {
-        if (!(muziek_is_gestart)) {
-            music.startMelody(music.builtInMelody(Melodies.Entertainer), MelodyOptions.Forever)
-            muziek_is_gestart = true
-        }
-        basic.showIcon(IconNames.Happy)
+        Start_finish_muziek()
     } else if (speltoestand == EINDTIJD_WORDT_GETOOND) {
-        music.stopMelody(MelodyStopOptions.All)
-        basic.showNumber(speeltijd)
+        Toon_eindtijd()
     } else if (speltoestand == SPEL_IS_GESTOPT) {
         muziek_is_gestart = false
         starttijd = 0
