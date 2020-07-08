@@ -1,5 +1,15 @@
-function Stop_het_spel () {
-	
+/**
+ * Reset alle variabele
+ * 
+ * Stop de finish muziek
+ * 
+ * Toon de tekst “druk A om te spelen”
+ */
+function Reset_het_spel () {
+    muziek_is_gestart = false
+    starttijd = 0
+    music.stopMelody(MelodyStopOptions.All)
+    basic.showString("Druk A om te spelen.")
 }
 input.onButtonPressed(Button.A, function () {
     if (speltoestand == SPEL_IS_GESTOPT) {
@@ -36,7 +46,9 @@ input.onPinPressed(TouchPin.P2, function () {
     }
 })
 /**
- * - Start de finish muziek
+ * - Start de finish muziek als deze nog niet gestart is
+ * 
+ * - toon een smiley op het scherm.
  */
 function Start_finish_muziek () {
     if (!(muziek_is_gestart)) {
@@ -67,9 +79,9 @@ function Toon_speeltijd () {
         basic.showNumber(speeltijd)
     }
 }
-let muziek_is_gestart = false
 let speeltijd = 0
 let starttijd = 0
+let muziek_is_gestart = false
 let speltoestand = 0
 let SPEL_IS_GESTOPT = 0
 let EINDTIJD_WORDT_GETOOND = 0
@@ -95,9 +107,6 @@ basic.forever(function () {
     } else if (speltoestand == EINDTIJD_WORDT_GETOOND) {
         Toon_eindtijd()
     } else if (speltoestand == SPEL_IS_GESTOPT) {
-        muziek_is_gestart = false
-        starttijd = 0
-        music.stopMelody(MelodyStopOptions.All)
-        basic.showString("Druk A om te starten.")
+        Reset_het_spel()
     }
 })
