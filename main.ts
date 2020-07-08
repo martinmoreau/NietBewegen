@@ -39,11 +39,13 @@ SPELER_IS_GEFINISHT = 3
 EINDTIJD_WORDT_GETOOND = 4
 SPEL_IS_GESTOPT = 5
 speltoestand = SPEL_IS_GESTOPT
+/**
+ * Hoofdprogramma
+ */
 basic.forever(function () {
     if (speltoestand == AFTELLEN_IS_GESTART) {
         music.playMelody("C - C - C5 - - - ", 120)
         starttijd = input.runningTime()
-        basic.showString("GO!")
         speltoestand = SPEL_IS_GESTART
     } else if (speltoestand == SPEL_IS_GESTART) {
         speeltijd = Math.trunc((input.runningTime() - starttijd) / 1000)
