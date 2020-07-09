@@ -31,11 +31,20 @@ function Toon_speeltijd () {
 input.onButtonPressed(Button.A, function () {
     if (speltoestand == SPEL_IS_GESTOPT) {
         led.stopAnimation()
-        speltoestand = AFTELLEN_IS_GESTART
+        speltoestand = STARTSIGNAAL_WORDT_AFGESPEELD
     } else if (speltoestand == SPELER_IS_GEFINISHT) {
         speltoestand = EINDTIJD_WORDT_GETOOND
     }
 })
+// - Speel het aftelgeluid af
+// 
+// - Onthoud de startijd om later de speltijd te berekenen
+function Speel_startsignaal () {
+    music.playMelody("C - C - C5 - - - ", 120)
+    starttijd = input.runningTime()
+    basic.showString("Go!")
+    speltoestand = SPEL_IS_GESTART
+}
 // - Stop de finish muziek
 // 
 // - Toon de eindtijd op het scherm
@@ -53,25 +62,17 @@ input.onButtonPressed(Button.AB, function () {
     basic.showString("  Eline Kon heeft dit geprogrammeerd.  ")
 })
 input.onButtonPressed(Button.B, function () {
+    led.stopAnimation()
     if (speltoestand != SPEL_IS_GESTOPT) {
         speltoestand = SPEL_IS_GESTOPT
     }
 })
 input.onPinPressed(TouchPin.P1, function () {
-    if (speltoestand == AFTELLEN_IS_GESTART || speltoestand == SPEL_IS_GESTART) {
+    if (speltoestand == STARTSIGNAAL_WORDT_AFGESPEELD || speltoestand == SPEL_IS_GESTART) {
         music.playTone(165, music.beat(BeatFraction.Whole))
         music.playTone(139, music.beat(BeatFraction.Double))
     }
 })
-// - Speel het aftelgeluid af
-// 
-// - Onthoud de startijd om later de speltijd te berekenen
-function Start_aftellen () {
-    music.playMelody("C - C - C5 - - - ", 120)
-    starttijd = input.runningTime()
-    basic.showString("Go!")
-    speltoestand = SPEL_IS_GESTART
-}
 let speeltijd = 0
 let starttijd = 0
 let muziek_is_gestart = false
@@ -80,8 +81,8 @@ let SPEL_IS_GESTOPT = 0
 let EINDTIJD_WORDT_GETOOND = 0
 let SPELER_IS_GEFINISHT = 0
 let SPEL_IS_GESTART = 0
-let AFTELLEN_IS_GESTART = 0
-AFTELLEN_IS_GESTART = 1
+let STARTSIGNAAL_WORDT_AFGESPEELD = 0
+STARTSIGNAAL_WORDT_AFGESPEELD = 1
 SPEL_IS_GESTART = 2
 SPELER_IS_GEFINISHT = 3
 EINDTIJD_WORDT_GETOOND = 4
@@ -89,8 +90,8 @@ SPEL_IS_GESTOPT = 5
 speltoestand = SPEL_IS_GESTOPT
 // Hoofdprogramma
 basic.forever(function () {
-    if (speltoestand == AFTELLEN_IS_GESTART) {
-        Start_aftellen()
+    if (speltoestand == STARTSIGNAAL_WORDT_AFGESPEELD) {
+        Speel_startsignaal()
     } else if (speltoestand == SPEL_IS_GESTART) {
         Toon_speeltijd()
     } else if (speltoestand == SPELER_IS_GEFINISHT) {
