@@ -63,7 +63,7 @@ input.onButtonPressed(Button.AB, function () {
 })
 input.onButtonPressed(Button.B, function () {
     led.stopAnimation()
-    if (spelstap == STARTSIGNAAL_WORDT_AFGESPEELD || (spelstap == SPEL_IS_GESTART || (spelstap == SPELER_IS_GEFINISHT || spelstap == EINDTIJD_WORDT_GETOOND))) {
+    if (spelstap != SPEL_IS_GESTOPT) {
         spelstap = SPEL_IS_GESTOPT
     }
 })
