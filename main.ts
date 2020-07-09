@@ -29,11 +29,11 @@ function Toon_speeltijd () {
     }
 }
 input.onButtonPressed(Button.A, function () {
-    if (speltoestand == SPEL_IS_GESTOPT) {
+    if (spelstap == SPEL_IS_GESTOPT) {
         led.stopAnimation()
-        speltoestand = STARTSIGNAAL_WORDT_AFGESPEELD
-    } else if (speltoestand == SPELER_IS_GEFINISHT) {
-        speltoestand = EINDTIJD_WORDT_GETOOND
+        spelstap = STARTSIGNAAL_WORDT_AFGESPEELD
+    } else if (spelstap == SPELER_IS_GEFINISHT) {
+        spelstap = EINDTIJD_WORDT_GETOOND
     }
 })
 // - Speel het aftelgeluid af
@@ -43,7 +43,7 @@ function Speel_startsignaal () {
     music.playMelody("C - C - C5 - - - ", 120)
     starttijd = input.runningTime()
     basic.showString("Go!")
-    speltoestand = SPEL_IS_GESTART
+    spelstap = SPEL_IS_GESTART
 }
 // - Stop de finish muziek
 // 
@@ -53,8 +53,8 @@ function Toon_eindtijd () {
     basic.showString(" Tijd: " + speeltijd)
 }
 input.onPinPressed(TouchPin.P2, function () {
-    if (speltoestand == SPEL_IS_GESTART) {
-        speltoestand = SPELER_IS_GEFINISHT
+    if (spelstap == SPEL_IS_GESTART) {
+        spelstap = SPELER_IS_GEFINISHT
     }
 })
 input.onButtonPressed(Button.AB, function () {
@@ -63,12 +63,12 @@ input.onButtonPressed(Button.AB, function () {
 })
 input.onButtonPressed(Button.B, function () {
     led.stopAnimation()
-    if (speltoestand != SPEL_IS_GESTOPT) {
-        speltoestand = SPEL_IS_GESTOPT
+    if (spelstap == STARTSIGNAAL_WORDT_AFGESPEELD || (spelstap == SPEL_IS_GESTART || (spelstap == SPELER_IS_GEFINISHT || spelstap == EINDTIJD_WORDT_GETOOND))) {
+        spelstap = SPEL_IS_GESTOPT
     }
 })
 input.onPinPressed(TouchPin.P1, function () {
-    if (speltoestand == STARTSIGNAAL_WORDT_AFGESPEELD || speltoestand == SPEL_IS_GESTART) {
+    if (spelstap == SPEL_IS_GESTART) {
         music.playTone(165, music.beat(BeatFraction.Whole))
         music.playTone(139, music.beat(BeatFraction.Double))
     }
@@ -76,7 +76,7 @@ input.onPinPressed(TouchPin.P1, function () {
 let speeltijd = 0
 let starttijd = 0
 let muziek_is_gestart = false
-let speltoestand = 0
+let spelstap = 0
 let SPEL_IS_GESTOPT = 0
 let EINDTIJD_WORDT_GETOOND = 0
 let SPELER_IS_GEFINISHT = 0
@@ -87,22 +87,18 @@ SPEL_IS_GESTART = 2
 SPELER_IS_GEFINISHT = 3
 EINDTIJD_WORDT_GETOOND = 4
 SPEL_IS_GESTOPT = 5
-speltoestand = SPEL_IS_GESTOPT
+spelstap = SPEL_IS_GESTOPT
 // Hoofdprogramma
 basic.forever(function () {
-    if (speltoestand == STARTSIGNAAL_WORDT_AFGESPEELD) {
+    if (spelstap == STARTSIGNAAL_WORDT_AFGESPEELD) {
         Speel_startsignaal()
-    } else if (speltoestand == SPEL_IS_GESTART) {
+    } else if (spelstap == SPEL_IS_GESTART) {
         Toon_speeltijd()
-    } else if (speltoestand == SPELER_IS_GEFINISHT) {
+    } else if (spelstap == SPELER_IS_GEFINISHT) {
         Start_finish_muziek()
-    } else if (speltoestand == EINDTIJD_WORDT_GETOOND) {
+    } else if (spelstap == EINDTIJD_WORDT_GETOOND) {
         Toon_eindtijd()
-    } else if (speltoestand == SPEL_IS_GESTOPT) {
+    } else if (spelstap == SPEL_IS_GESTOPT) {
         Reset_het_spel()
     }
-})
-basic.forever(function () {
-    serial.writeLine("" + (speltoestand))
-    basic.pause(10000)
 })
