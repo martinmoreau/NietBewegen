@@ -1,15 +1,32 @@
-/**
- * - Reset alle variabele
- * 
- * - Stop de finish muziek
- * 
- * - Toon de tekst “druk A om te spelen”
- */
+// - Reset alle variabele
+// 
+// - Stop de finish muziek
+// 
+// - Toon de tekst “druk A om te spelen”
 function Reset_het_spel () {
     muziek_is_gestart = false
     starttijd = 0
     music.stopMelody(MelodyStopOptions.All)
     basic.showString("Druk A om te spelen.")
+}
+// - Start de finish muziek als deze nog niet gestart is
+// 
+// - toon een smiley op het scherm.
+function Start_finish_muziek () {
+    if (!(muziek_is_gestart)) {
+        music.startMelody(music.builtInMelody(Melodies.Entertainer), MelodyOptions.Forever)
+        muziek_is_gestart = true
+    }
+    basic.showIcon(IconNames.Happy)
+}
+// - Bereken de actuele speeltijd
+// 
+// - Laat om de 5 seconden de speeltijd zien op het scherm
+function Toon_speeltijd () {
+    speeltijd = Math.trunc((input.runningTime() - starttijd) / 1000)
+    if (speeltijd % 5 == 0) {
+        basic.showNumber(speeltijd)
+    }
 }
 input.onButtonPressed(Button.A, function () {
     if (speltoestand == SPEL_IS_GESTOPT) {
@@ -19,22 +36,9 @@ input.onButtonPressed(Button.A, function () {
         speltoestand = EINDTIJD_WORDT_GETOOND
     }
 })
-/**
- * - Speel het aftelgeluid af
- * 
- * - Onthoud de startijd om later de speltijd te berekenen
- */
-function Start_aftellen () {
-    music.playMelody("C - C - C5 - - - ", 120)
-    starttijd = input.runningTime()
-    basic.showString("Go!")
-    speltoestand = SPEL_IS_GESTART
-}
-/**
- * - Stop de finish muziek
- * 
- * - Toon de eindtijd op het scherm
- */
+// - Stop de finish muziek
+// 
+// - Toon de eindtijd op het scherm
 function Toon_eindtijd () {
     music.stopMelody(MelodyStopOptions.All)
     basic.showString(" Tijd: " + speeltijd)
@@ -48,18 +52,6 @@ input.onButtonPressed(Button.AB, function () {
     led.stopAnimation()
     basic.showString("  Eline Kon heeft dit geprogrammeerd.  ")
 })
-/**
- * - Start de finish muziek als deze nog niet gestart is
- * 
- * - toon een smiley op het scherm.
- */
-function Start_finish_muziek () {
-    if (!(muziek_is_gestart)) {
-        music.startMelody(music.builtInMelody(Melodies.Entertainer), MelodyOptions.Forever)
-        muziek_is_gestart = true
-    }
-    basic.showIcon(IconNames.Happy)
-}
 input.onButtonPressed(Button.B, function () {
     if (speltoestand != SPEL_IS_GESTOPT) {
         speltoestand = SPEL_IS_GESTOPT
@@ -71,16 +63,14 @@ input.onPinPressed(TouchPin.P1, function () {
         music.playTone(139, music.beat(BeatFraction.Double))
     }
 })
-/**
- * - Bereken de actuele speeltijd
- * 
- * - Laat om de 5 seconden de speeltijd zien op het scherm
- */
-function Toon_speeltijd () {
-    speeltijd = Math.trunc((input.runningTime() - starttijd) / 1000)
-    if (speeltijd % 5 == 0) {
-        basic.showNumber(speeltijd)
-    }
+// - Speel het aftelgeluid af
+// 
+// - Onthoud de startijd om later de speltijd te berekenen
+function Start_aftellen () {
+    music.playMelody("C - C - C5 - - - ", 120)
+    starttijd = input.runningTime()
+    basic.showString("Go!")
+    speltoestand = SPEL_IS_GESTART
 }
 let speeltijd = 0
 let starttijd = 0
@@ -97,9 +87,7 @@ SPELER_IS_GEFINISHT = 3
 EINDTIJD_WORDT_GETOOND = 4
 SPEL_IS_GESTOPT = 5
 speltoestand = SPEL_IS_GESTOPT
-/**
- * Hoofdprogramma
- */
+// Hoofdprogramma
 basic.forever(function () {
     if (speltoestand == AFTELLEN_IS_GESTART) {
         Start_aftellen()
